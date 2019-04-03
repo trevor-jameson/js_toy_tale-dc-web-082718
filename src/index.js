@@ -20,6 +20,7 @@ function makeAllToyCards(toys) {
 function makeSingleToyCard(toy) {
     const toyCard = document.createElement('div')
     toyCard.classList.add("card")
+    toyCard.id = `toy-${toy.id}`
 
     const toyName = document.createElement("h2")
     toyName.innerText = toy.name
@@ -37,9 +38,24 @@ function makeSingleToyCard(toy) {
     const toyLikeButton = document.createElement('button')
     toyLikeButton.innerText = 'Like <3'
     toyLikeButton.classList.add('like-btn')
+    toyLikeButton.addEventListener('click', updateLikeCount)
     toyCard.append(toyLikeButton)
 
     toyCollection.appendChild(toyCard)
+}
+
+function updateToyCardLikes(toy) {
+  const toyLikes = document.querySelector(`#toy-${toy.id} > p`);
+  toyLikes.innerText = `Likes: ${toy.likes}`
+}
+
+function updateLikeCount(e) {
+  const toyId = e.target.parentElement.id.match(/\d+/)[0]
+  let currentToyLikes = e.target.previousSibling.innerText.match(/\d+/)[0];
+  let newLikes = parseInt(currentToyLikes) + 1
+  adapter.patchNewLikeCount(toyId, newLikes)
+    .then(res => res.json())
+    .then(json => updateToyCardLikes(json))
 }
 
 
